@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.avn.otus.hw.users.exceptions.UserAlreadyExistsException;
 import ru.avn.otus.hw.users.exceptions.UserIncorrectVersionException;
+import ru.avn.otus.hw.users.exceptions.UserNotFoundException;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
@@ -18,9 +19,13 @@ public class UserExceptionControllerAdvice {
         response.sendError(HttpStatus.BAD_REQUEST.value());
     }
 
-
     @ExceptionHandler(value = {UserAlreadyExistsException.class, UserIncorrectVersionException.class})
     void handleConflicts(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.CONFLICT.value());
+    }
+
+    @ExceptionHandler(value = {UserNotFoundException.class})
+    void handleNotFound(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.NOT_FOUND.value());
     }
 }
