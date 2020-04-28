@@ -33,6 +33,9 @@ public class User {
 
     private String phone;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     @Version
     private int version;
 }

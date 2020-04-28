@@ -8,7 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.avn.otus.hw.users.dto.*;
-import ru.avn.otus.hw.users.exceptions.UserConflictException;
+import ru.avn.otus.hw.users.exceptions.UserAlreadyExistsException;
+import ru.avn.otus.hw.users.exceptions.UserIncorrectVersionException;
 import ru.avn.otus.hw.users.exceptions.UserNotFoundException;
 import ru.avn.otus.hw.users.services.UserService;
 import ru.avn.otus.hw.users.validators.annotations.ValidIfMatchUserVersion;
@@ -24,7 +25,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    CreateUserResultDTO createUser(@RequestBody CreateUserDTO createUserDTO) {
+    CreateUserResultDTO createUser(@RequestBody CreateUserDTO createUserDTO) throws UserAlreadyExistsException {
         return userService.createUser(createUserDTO);
     }
 
@@ -47,7 +48,7 @@ public class UserController {
     void updateUser(@PathVariable long userId,
                     @ValidIfMatchUserVersion @RequestHeader("If-Match") String ifMatchHeaderUserVersion,
                     @RequestBody UpdateUserDTO updateUserDTO)
-            throws UserNotFoundException, UserConflictException {
+            throws UserNotFoundException, UserIncorrectVersionException {
         userService.updateUser(userId, ETagUtils.ifMatchHeaderToInt(ifMatchHeaderUserVersion), updateUserDTO);
     }
 

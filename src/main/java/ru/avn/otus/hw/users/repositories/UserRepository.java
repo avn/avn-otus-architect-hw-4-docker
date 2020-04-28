@@ -11,7 +11,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Lock(LockModeType.OPTIMISTIC)
-    @Query("select u from User u where u.id = :id")
+    @Query("select u from User u where u.id = :id and u.isDeleted = FALSE")
     Optional<User> fetchByIdWithOptimisticLock(Long id);
 
+    Optional<User> findByIdAndIsDeletedFalse(Long id);
 }
