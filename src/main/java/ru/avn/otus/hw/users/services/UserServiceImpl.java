@@ -79,7 +79,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(long userId, int expectedUserVersion, UpdateUserDTO updateUserDTO) throws UserNotFoundException, UserIncorrectVersionException {
+    public void updateUser(long userId, int expectedUserVersion, UpdateUserDTO updateUserDTO)
+            throws UserNotFoundException, UserIncorrectVersionException {
+
         log.debug("Starting updating user by that id '{}'. Updating to '{}'", userId, updateUserDTO);
 
         User user = userRepository.fetchByIdWithOptimisticLock(userId)
