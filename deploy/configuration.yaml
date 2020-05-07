@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: avn-otus-hw1-architect-config-map
+data:
+  db.database: otushw1
+  db.username: otushw1
+  application.database.url: asd
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: avn-otus-hw1-architect-secret
+type: Opaque
+data:
+  db.password: c2VjcmV0X3Bhc3N3b3Jk

@@ -6,7 +6,7 @@ public class UserIncorrectVersionException extends ServiceException {
 
     public UserIncorrectVersionException(long userId, int expectedVersion, int currentVersion) {
         super(String.format("A version of user with that id '%d' was changed. " +
-                        "Expected version '%d'. Current current '%d'.", userId, expectedVersion, currentVersion));
+                        "Expected version is '%d', but current is '%d'.", userId, expectedVersion, currentVersion));
     }
 
     public UserIncorrectVersionException(long id, Throwable t) {

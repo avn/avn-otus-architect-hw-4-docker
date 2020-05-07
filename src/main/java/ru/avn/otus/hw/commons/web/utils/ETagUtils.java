@@ -1,4 +1,4 @@
-package ru.avn.otus.hw.utils;
+package ru.avn.otus.hw.commons.web.utils;
 
 public class ETagUtils {
 

@@ -13,7 +13,7 @@ import ru.avn.otus.hw.users.exceptions.UserIncorrectVersionException;
 import ru.avn.otus.hw.users.exceptions.UserNotFoundException;
 import ru.avn.otus.hw.users.services.UserService;
 import ru.avn.otus.hw.users.validators.annotations.ValidIfMatchUserVersion;
-import ru.avn.otus.hw.utils.ETagUtils;
+import ru.avn.otus.hw.commons.web.utils.ETagUtils;
 
 @Slf4j
 @Validated
