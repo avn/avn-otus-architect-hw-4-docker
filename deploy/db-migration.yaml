@@ -8,5 +8,35 @@ spec:
       containers:
         - name: pi
           image: avnikulin/otus-hw1-architect:1.0.0
-          command: ["java", "-version", "&&" ,"ls"]
+          command: ["liquibase"]
+          args: ["--changeLogFile", "changelog.xml",
+                 "--username", "$(DB_USERNAME)",
+                 "--password", "$(DB_PASSWORD)",
+                 "--url", "$(DB_URL)",
+                 "--driver", "$(DB_DRIVER)",
+                 "--classpath", "/usr/share/java/postgresql-jdbc.jar",
+                 "update"
+          ]
+          env:
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: avn-otus-hw1-architect-config-map
+                  key: db.username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: avn-otus-hw1-architect-secret
+                  key: db.password
+            - name: DB_DRIVER
+              valueFrom:
+                configMapKeyRef:
+                  name: avn-otus-hw1-architect-config-map
+                  key: db.driver
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: avn-otus-hw1-architect-config-map
+                  key: db.url
       restartPolicy: Never
+

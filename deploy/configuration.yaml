@@ -6,7 +6,8 @@ metadata:
 data:
   db.database: otushw1
   db.username: otushw1
-  application.database.url: asd
+  db.url: jdbc:postgresql://postgres:5432/otushw1
+  db.driver: org.postgresql.Driver
 ---
 apiVersion: v1
 kind: Secret

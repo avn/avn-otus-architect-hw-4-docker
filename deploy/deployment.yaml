@@ -14,9 +14,25 @@ spec:
     spec:
       containers:
         - name: avn-otus-hw1-architect
-          image: avnikulin/otus-hw1-architect
+          image: avnikulin/otus-hw1-architect:1.0.0
           ports:
             - containerPort: 8000
+          env:
+            - name: spring_datasource_url
+              valueFrom:
+                configMapKeyRef:
+                  name: avn-otus-hw1-architect-config-map
+                  key: db.url
+            - name: spring_datasource_username
+              valueFrom:
+                configMapKeyRef:
+                  name: avn-otus-hw1-architect-config-map
+                  key: db.username
+            - name: spring_datasource_password
+              valueFrom:
+                secretKeyRef:
+                  name: avn-otus-hw1-architect-secret
+                  key: db.password
           livenessProbe:
             httpGet:
               port: 8000
