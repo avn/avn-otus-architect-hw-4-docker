@@ -218,7 +218,7 @@
 							"});\r",
 							"\r",
 							"pm.test('Get user test: Check Response Data. ', function () {\r",
-							"    pm.expect(jsonData.id).to.equal(pm.collectionVariables.get('userId'));\r",
+							"    pm.expect(jsonData.id).to.equal(Number(pm.collectionVariables.get('userId')));\r",
 							"    pm.expect(jsonData.username).to.equal(createUserTestData.username);\r",
 							"    pm.expect(jsonData.firstName).to.equal(createUserTestData.firstName);\r",
 							"    pm.expect(jsonData.lastName).to.equal(createUserTestData.lastName);\r",
@@ -397,14 +397,15 @@
 						"exec": [
 							"var jsonData = JSON.parse(responseBody);\r",
 							"var updateUserTestData = JSON.parse(pm.collectionVariables.get('updateUserTestData'));\r",
+							"var createUserTestData = JSON.parse(pm.collectionVariables.get('createUserTestData'));\r",
 							"\r",
-							"pm.test('Get user test: Expect 200 status.', function () {\r",
+							"pm.test('Get updated user test: Expect 200 status.', function () {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							"\r",
-							"pm.test('Get user test: Check Response Data. ', function () {\r",
-							"    pm.expect(jsonData.id).to.equal(pm.collectionVariables.get('userId'));\r",
-							"    pm.expect(jsonData.usernam).to.equal(updateUserTestData.username);\r",
+							"pm.test('Get updated user test: Check Response Data. ', function () {\r",
+							"    pm.expect(jsonData.id).to.equal(Number(pm.collectionVariables.get('userId')));\r",
+							"    pm.expect(jsonData.username).to.equal(createUserTestData.username);\r",
 							"    pm.expect(jsonData.firstName).to.equal(updateUserTestData.firstName);\r",
 							"    pm.expect(jsonData.lastName).to.equal(updateUserTestData.lastName);\r",
 							"    pm.expect(jsonData.email).to.equal(updateUserTestData.email);\r",
@@ -475,7 +476,7 @@
 					"script": {
 						"id": "21fc445c-b821-4edf-85ab-10502c80ae07",
 						"exec": [
-							"pm.test('Get user test: Expect 404 status.', function () {\r",
+							"pm.test('Get deleted user test: Expect 404 status.', function () {\r",
 							"    pm.response.to.have.status(404);\r",
 							"});"
 						],
@@ -525,37 +526,37 @@
 	],
 	"variable": [
 		{
-			"id": "8bb6a303-5257-4eaa-818b-b366d8c1ec88",
+			"id": "c7bb53d6-0cca-4877-ba1e-b15459d0e626",
 			"key": "baseUrl",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "ff0315e4-3694-4b27-82f6-6fa53cbb80eb",
+			"id": "593c4706-fec5-4f45-9660-1abc17f52417",
 			"key": "userId",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "3d15ef20-a330-44df-91ce-fc75f4d62f15",
+			"id": "8352664f-2633-4b1f-a2f7-0835d436d433",
 			"key": "createUserTestData",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "5f130d08-7206-46b6-8735-740d0233878c",
+			"id": "4e56fa86-7655-4b55-ab63-c6053527663e",
 			"key": "updateUserTestData",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "ce7c017a-3381-46a2-a845-c7d4b1c61335",
+			"id": "41b10170-3a04-4020-8746-7c1407ab829d",
 			"key": "currentUserVersion",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "f720264f-fc89-4141-ba60-7fc8b0eff631",
+			"id": "8c1c510e-a316-4588-af36-b1ccb7fd8c59",
 			"key": "createDublicateUserTestData",
 			"value": "",
 			"type": "string"

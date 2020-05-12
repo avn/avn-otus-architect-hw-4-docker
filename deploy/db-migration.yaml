@@ -1,12 +1,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: pi
+  name: avn-otus-hw1-architect-db-migration-job
 spec:
   template:
     spec:
       containers:
-        - name: pi
+        - name: avn-otus-hw1-architect-db-migration-job
           image: avnikulin/otus-hw1-architect:1.0.0
           command: ["liquibase"]
           args: ["--changeLogFile", "changelog.xml",
