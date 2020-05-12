@@ -9,8 +9,7 @@
 
 ## Postman tests
 
-- /postman/Otus HW1 Architect (Users API).postman_collection.json
-- before testing change **baseurl** property    
+- newman run crud_user_api_test_collections.json --env-var baseUrl=arch.homework/otusapp
 
 ## How to stop
 
