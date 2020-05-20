@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: avn-otus-hw1-architect
-          image: avnikulin/otus-hw1-architect:1.0.0
+          image: avnikulin/otus-hw1-architect:1.1.0
           ports:
             - containerPort: 8000
           env:

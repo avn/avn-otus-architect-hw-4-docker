@@ -6,7 +6,8 @@ spec:
   selector:
     app: avn-otus-hw1-architect-app
   ports:
-    - protocol: TCP
+    - name: avn-app-port
+      protocol: TCP
       port: 8000
       targetPort: 8000
   type: NodePort

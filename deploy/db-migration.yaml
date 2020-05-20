@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: avn-otus-hw1-architect-db-migration-job
-          image: avnikulin/otus-hw1-architect:1.0.0
+          image: avnikulin/otus-hw1-architect:1.1.0
           command: ["liquibase"]
           args: ["--changeLogFile", "changelog.xml",
                  "--username", "$(DB_USERNAME)",
