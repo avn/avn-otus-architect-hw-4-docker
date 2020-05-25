@@ -2,33 +2,33 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres
+  name: avn-postgres
   labels:
-    app: postgres
+    app: avn-postgres
 spec:
   type: NodePort
   ports:
     - port: 5432
   selector:
-    app: postgres
+    app: avn-postgres
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: postgres-statefulset
+  name: avn-postgres
 spec:
   serviceName: "postgres"
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: avn-postgres
   template:
     metadata:
       labels:
-        app: postgres
+        app: avn-postgres
     spec:
       containers:
-        - name: postgres
+        - name: avn-postgres
           image: postgres:latest
           ports:
             - containerPort: 5432
@@ -37,17 +37,17 @@ spec:
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
-                  name: avn-otus-hw1-architect-config-map
+                  name: avn-app-config
                   key: db.database
             - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:
-                  name: avn-otus-hw1-architect-config-map
+                  name: avn-app-config
                   key: db.username
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: avn-otus-hw1-architect-secret
+                  name: avn-app-secret
                   key: db.password
           volumeMounts:
             - name: postgredb

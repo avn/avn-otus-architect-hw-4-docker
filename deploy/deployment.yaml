@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: avn-otus-hw1-architect-deployment
+  name: avn-app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: avn-otus-hw1-architect-app
+      app: avn-app
   template:
     metadata:
       labels:
-        app: avn-otus-hw1-architect-app
+        app: avn-app
     spec:
       containers:
         - name: avn-otus-hw1-architect
@@ -21,17 +21,17 @@ spec:
             - name: spring_datasource_url
               valueFrom:
                 configMapKeyRef:
-                  name: avn-otus-hw1-architect-config-map
+                  name: avn-app-config
                   key: db.url
             - name: spring_datasource_username
               valueFrom:
                 configMapKeyRef:
-                  name: avn-otus-hw1-architect-config-map
+                  name: avn-app-config
                   key: db.username
             - name: spring_datasource_password
               valueFrom:
                 secretKeyRef:
-                  name: avn-otus-hw1-architect-secret
+                  name: avn-app-secret
                   key: db.password
           livenessProbe:
             httpGet:

@@ -13,14 +13,18 @@
 					"script": {
 						"id": "f8b361c5-af66-4fea-9a5f-294681f0f7f6",
 						"exec": [
-							"var createUserTestData =  {",
-							"        username:pm.variables.replaceIn(\"{{$randomUserName}}\"),",
-							"\t    firstName:pm.variables.replaceIn(\"{{$randomFirstName}}\"),",
-							"\t    lastName:pm.variables.replaceIn(\"{{$randomLastName}}\"),",
-							"\t    email:pm.variables.replaceIn(\"{{$randomEmail}}\"),",
-							"\t    phone:pm.variables.replaceIn(\"{{$randomPhoneNumber}}\")",
+							"var counter = pm.collectionVariables.get('counter');",
+							"counter++;",
+							"pm.collectionVariables.set('counter', counter);",
+							"",
+							"var createUserTestData = {",
+							"\tusername: pm.variables.replaceIn(\"{{$randomUserName}}_\" + counter),",
+							"\tfirstName: pm.variables.replaceIn(\"{{$randomFirstName}}\"),",
+							"\tlastName: pm.variables.replaceIn(\"{{$randomLastName}}\"),",
+							"\temail: pm.variables.replaceIn(\"{{$randomEmail}}\"),",
+							"\tphone: pm.variables.replaceIn(\"{{$randomPhoneNumber}}\")",
 							"};",
-							"  ",
+							"",
 							"pm.collectionVariables.set('createUserTestData', JSON.stringify(createUserTestData));",
 							""
 						],
@@ -57,6 +61,11 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Host",
+						"value": "{{host}}",
 						"type": "text"
 					}
 				],
@@ -123,6 +132,11 @@
 						"key": "Content-Type",
 						"type": "text",
 						"value": "application/json"
+					},
+					{
+						"key": "Host",
+						"value": "{{host}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -177,6 +191,11 @@
 						"key": "Content-Type",
 						"type": "text",
 						"value": "application/json"
+					},
+					{
+						"key": "Host",
+						"value": "{{host}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -238,7 +257,13 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Host",
+						"value": "{{host}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "http://{{baseUrl}}/users/{{userId}}",
 					"protocol": "http",
@@ -300,6 +325,11 @@
 						"key": "If-Match",
 						"type": "text",
 						"value": "\"2147483647\""
+					},
+					{
+						"key": "Host",
+						"value": "{{host}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -315,6 +345,13 @@
 					"path": [
 						"users",
 						"{{userId}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -367,6 +404,11 @@
 						"key": "If-Match",
 						"value": "{{currentUserVersion}}",
 						"type": "text"
+					},
+					{
+						"key": "Host",
+						"value": "{{host}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -382,6 +424,13 @@
 					"path": [
 						"users",
 						"{{userId}}"
+					],
+					"query": [
+						{
+							"key": "Host",
+							"value": null,
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -420,7 +469,13 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Host",
+						"value": "{{host}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "http://{{baseUrl}}/users/{{userId}}",
 					"protocol": "http",
@@ -453,7 +508,13 @@
 			],
 			"request": {
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "Host",
+						"value": "{{host}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "http://{{baseUrl}}/users/{{userId}}",
 					"protocol": "http",
@@ -486,7 +547,13 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Host",
+						"value": "{{host}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "http://{{baseUrl}}/users/{{userId}}",
 					"protocol": "http",
@@ -526,39 +593,51 @@
 	],
 	"variable": [
 		{
-			"id": "c7bb53d6-0cca-4877-ba1e-b15459d0e626",
+			"id": "c4b3f0a0-adc2-4241-a0a9-8a777a099bcd",
 			"key": "baseUrl",
-			"value": "",
+			"value": "{{host}}/otusapp",
 			"type": "string"
 		},
 		{
-			"id": "593c4706-fec5-4f45-9660-1abc17f52417",
+			"id": "76038936-28ed-4ad9-b71b-b1f7e19b68fd",
 			"key": "userId",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "8352664f-2633-4b1f-a2f7-0835d436d433",
+			"id": "b5c840a9-b30b-42d0-9478-a17ebcc065a1",
 			"key": "createUserTestData",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "4e56fa86-7655-4b55-ab63-c6053527663e",
+			"id": "6dbe8de6-e215-4292-9596-b868a771080e",
 			"key": "updateUserTestData",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "41b10170-3a04-4020-8746-7c1407ab829d",
+			"id": "181edf83-cd2c-4a22-9040-44076b3d6b6a",
 			"key": "currentUserVersion",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "8c1c510e-a316-4588-af36-b1ccb7fd8c59",
+			"id": "9326781b-398e-49fd-a33e-84001ed56280",
 			"key": "createDublicateUserTestData",
 			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "f91fae5c-134b-4bcb-a427-55a307209d77",
+			"key": "counter",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"id": "8b7288b6-28e5-41fc-857d-0276eab3bcb3",
+			"key": "host",
+			"value": "arch.homework",
 			"type": "string"
 		}
 	],

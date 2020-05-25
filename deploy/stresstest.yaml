@@ -1,0 +1,687 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: avn-app-stresstest
+spec:
+  template:
+    spec:
+      containers:
+        - name: avn-app-stresstest
+          image: postman/newman:alpine
+          command: ["newman"]
+          args: ["run",
+                 "crud_user_api_test_collections.json",
+                 "--env-var",
+                 "baseUrl=$(NGINX_INGRESS_CONROLLER_NAME):80/otusapp",
+                 "--env-var",
+                 "host=$(APP_HOST)",
+                 "-n",
+                 "2147483647",
+                 "delay-request",
+                 "5"]
+          env:
+            - name: NGINX_INGRESS_CONROLLER_NAME
+              value: nginx-nginx-ingress-controller
+            - name: APP_HOST
+              value: arch.homework
+          volumeMounts:
+            - mountPath: /etc/newman
+              name: newman-volume
+      restartPolicy: OnFailure
+      volumes:
+        - name: newman-volume
+          configMap:
+            name: avn-app-stresstest-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: avn-app-stresstest-config
+data:
+  crud_user_api_test_collections.json: |-
+    {
+    	"info": {
+    		"_postman_id": "f76160a6-bdc5-412d-a282-18e551813704",
+    		"name": "Otus HW1 Architect (Users API)",
+    		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    	},
+    	"item": [
+    		{
+    			"name": "Create User ",
+    			"event": [
+    				{
+    					"listen": "prerequest",
+    					"script": {
+    						"id": "f8b361c5-af66-4fea-9a5f-294681f0f7f6",
+    						"exec": [
+    							"var counter = pm.collectionVariables.get('counter');",
+    							"counter++;",
+    							"pm.collectionVariables.set('counter', counter);",
+    							"",
+    							"var createUserTestData = {",
+    							"\tusername: pm.variables.replaceIn(\"{{$randomUserName}}_\" + counter),",
+    							"\tfirstName: pm.variables.replaceIn(\"{{$randomFirstName}}\"),",
+    							"\tlastName: pm.variables.replaceIn(\"{{$randomLastName}}\"),",
+    							"\temail: pm.variables.replaceIn(\"{{$randomEmail}}\"),",
+    							"\tphone: pm.variables.replaceIn(\"{{$randomPhoneNumber}}\")",
+    							"};",
+    							"",
+    							"pm.collectionVariables.set('createUserTestData', JSON.stringify(createUserTestData));",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				},
+    				{
+    					"listen": "test",
+    					"script": {
+    						"id": "5dbdf0ff-0006-4474-8c24-e91569086ddb",
+    						"exec": [
+    							"var jsonData = JSON.parse(responseBody);\r",
+    							"pm.collectionVariables.set('userId', jsonData.id)\r",
+    							"\r",
+    							"var createUserTestData = JSON.parse(pm.collectionVariables.get('createUserTestData'));\r",
+    							"\r",
+    							"pm.test('Create user test: Expect 200 status.', function () {\r",
+    							"    pm.response.to.have.status(200);\r",
+    							"});\r",
+    							"\r",
+    							"pm.test('Create user test: Check Response Data. ', function () {\r",
+    							"    pm.expect(jsonData.id).not.equal(null);\r",
+    							"    pm.expect(jsonData.username).to.equal(createUserTestData.username);\r",
+    							"});\r",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				}
+    			],
+    			"request": {
+    				"method": "POST",
+    				"header": [
+    					{
+    						"key": "Content-Type",
+    						"value": "application/json",
+    						"type": "text"
+    					},
+    					{
+    						"key": "Host",
+    						"value": "{{host}}",
+    						"type": "text"
+    					}
+    				],
+    				"body": {
+    					"mode": "raw",
+    					"raw": "{{createUserTestData}}"
+    				},
+    				"url": {
+    					"raw": "http://{{baseUrl}}/users",
+    					"protocol": "http",
+    					"host": [
+    						"{{baseUrl}}"
+    					],
+    					"path": [
+    						"users"
+    					]
+    				}
+    			},
+    			"response": []
+    		},
+    		{
+    			"name": "Create Dublicate User",
+    			"event": [
+    				{
+    					"listen": "prerequest",
+    					"script": {
+    						"id": "ad977091-acc8-494f-8607-3f370e0b19c0",
+    						"exec": [
+    							"var createUserTestData = JSON.parse(pm.collectionVariables.get('createUserTestData'));",
+    							"",
+    							"var createDublicateUserTestData =  {",
+    							"        username:createUserTestData.username,",
+    							"\t    firstName:pm.variables.replaceIn(\"{{$randomFirstName}}\"),",
+    							"\t    lastName:pm.variables.replaceIn(\"{{$randomLastName}}\"),",
+    							"\t    email:pm.variables.replaceIn(\"{{$randomEmail}}\"),",
+    							"\t    phone:pm.variables.replaceIn(\"{{$randomPhoneNumber}}\")",
+    							"};",
+    							"  ",
+    							"pm.collectionVariables.set('createDublicateUserTestData', JSON.stringify(createDublicateUserTestData));",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				},
+    				{
+    					"listen": "test",
+    					"script": {
+    						"id": "2cfe7e2e-4fb2-46bb-9d02-3fb04e486214",
+    						"exec": [
+    							"pm.test('Create user test: Expect 409 status.', function () {\r",
+    							"    pm.response.to.have.status(409);\r",
+    							"});\r",
+    							"\r",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				}
+    			],
+    			"request": {
+    				"method": "POST",
+    				"header": [
+    					{
+    						"key": "Content-Type",
+    						"type": "text",
+    						"value": "application/json"
+    					},
+    					{
+    						"key": "Host",
+    						"value": "{{host}}",
+    						"type": "text"
+    					}
+    				],
+    				"body": {
+    					"mode": "raw",
+    					"raw": "{{createDublicateUserTestData}}"
+    				},
+    				"url": {
+    					"raw": "http://{{baseUrl}}/users",
+    					"protocol": "http",
+    					"host": [
+    						"{{baseUrl}}"
+    					],
+    					"path": [
+    						"users"
+    					]
+    				}
+    			},
+    			"response": []
+    		},
+    		{
+    			"name": "Create Error User",
+    			"event": [
+    				{
+    					"listen": "prerequest",
+    					"script": {
+    						"id": "fca71d1a-438c-4602-b769-0dd859611146",
+    						"exec": [
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				},
+    				{
+    					"listen": "test",
+    					"script": {
+    						"id": "3caedb50-7174-493f-bafe-bbe89f916966",
+    						"exec": [
+    							"pm.test('Create user test: Expect 400 status.', function () {\r",
+    							"    pm.response.to.have.status(400);\r",
+    							"});\r",
+    							"\r",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				}
+    			],
+    			"request": {
+    				"method": "POST",
+    				"header": [
+    					{
+    						"key": "Content-Type",
+    						"type": "text",
+    						"value": "application/json"
+    					},
+    					{
+    						"key": "Host",
+    						"value": "{{host}}",
+    						"type": "text"
+    					}
+    				],
+    				"body": {
+    					"mode": "raw",
+    					"raw": "{\n\t\"username\":\"test\",\n\t\"firstName\":\"test\",\n\t\"lastName\":\"test\",\n\t\"email\": \"email@email.com\",\n\t\"phone\": \"error\"\n}"
+    				},
+    				"url": {
+    					"raw": "http://{{baseUrl}}/users",
+    					"protocol": "http",
+    					"host": [
+    						"{{baseUrl}}"
+    					],
+    					"path": [
+    						"users"
+    					]
+    				}
+    			},
+    			"response": []
+    		},
+    		{
+    			"name": "Get User",
+    			"event": [
+    				{
+    					"listen": "test",
+    					"script": {
+    						"id": "b115ab39-6803-4235-ad74-d30f005668e8",
+    						"exec": [
+    							"var jsonData = JSON.parse(responseBody);\r",
+    							"var createUserTestData = JSON.parse(pm.collectionVariables.get('createUserTestData'));\r",
+    							"var currentUserVersion = pm.response.headers.get(\"ETag\");\r",
+    							"if (currentUserVersion) {\r",
+    							"    currentUserVersion = currentUserVersion.replace('W/', '');\r",
+    							"}\r",
+    							"\r",
+    							"pm.collectionVariables.set('currentUserVersion', currentUserVersion)\r",
+    							"\r",
+    							"pm.test('Get user test: Expect 200 status.', function () {\r",
+    							"    pm.response.to.have.status(200);\r",
+    							"});\r",
+    							"\r",
+    							"pm.test('Get user test: Check Response Data. ', function () {\r",
+    							"    pm.expect(jsonData.id).to.equal(Number(pm.collectionVariables.get('userId')));\r",
+    							"    pm.expect(jsonData.username).to.equal(createUserTestData.username);\r",
+    							"    pm.expect(jsonData.firstName).to.equal(createUserTestData.firstName);\r",
+    							"    pm.expect(jsonData.lastName).to.equal(createUserTestData.lastName);\r",
+    							"    pm.expect(jsonData.email).to.equal(createUserTestData.email);\r",
+    							"    pm.expect(jsonData.phone).to.equal(createUserTestData.phone);\r",
+    							"    \r",
+    							"});\r",
+    							"\r",
+    							"pm.test('Get user test: Check ETag existence.', function () {\r",
+    							"    pm.expect(currentUserVersion).not.equal(null);\r",
+    							"});\r",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				}
+    			],
+    			"request": {
+    				"method": "GET",
+    				"header": [
+    					{
+    						"key": "Host",
+    						"value": "{{host}}",
+    						"type": "text"
+    					}
+    				],
+    				"url": {
+    					"raw": "http://{{baseUrl}}/users/{{userId}}",
+    					"protocol": "http",
+    					"host": [
+    						"{{baseUrl}}"
+    					],
+    					"path": [
+    						"users",
+    						"{{userId}}"
+    					]
+    				}
+    			},
+    			"response": []
+    		},
+    		{
+    			"name": "Invalid Update User",
+    			"event": [
+    				{
+    					"listen": "prerequest",
+    					"script": {
+    						"id": "fafa85cc-e671-4719-b8b9-1df2786963bc",
+    						"exec": [
+    							"var updateUserTestData =  {",
+    							"  \t    firstName:pm.variables.replaceIn(\"{{$randomFirstName}}\"),",
+    							"\t    lastName:pm.variables.replaceIn(\"{{$randomLastName}}\"),",
+    							"\t    email:pm.variables.replaceIn(\"{{$randomEmail}}\"),",
+    							"\t    phone:pm.variables.replaceIn(\"{{$randomPhoneNumber}}\")",
+    							"};",
+    							"  ",
+    							"pm.collectionVariables.set('updateUserTestData', JSON.stringify(updateUserTestData));",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				},
+    				{
+    					"listen": "test",
+    					"script": {
+    						"id": "603ec094-6e25-43df-836a-563cb517b45c",
+    						"exec": [
+    							"pm.test('Update user test: Expect 409 status.', function () {\r",
+    							"    pm.response.to.have.status(409);\r",
+    							"});\r",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				}
+    			],
+    			"request": {
+    				"method": "PUT",
+    				"header": [
+    					{
+    						"key": "Content-Type",
+    						"type": "text",
+    						"value": "application/json"
+    					},
+    					{
+    						"key": "If-Match",
+    						"type": "text",
+    						"value": "\"2147483647\""
+    					},
+    					{
+    						"key": "Host",
+    						"value": "{{host}}",
+    						"type": "text"
+    					}
+    				],
+    				"body": {
+    					"mode": "raw",
+    					"raw": "{{updateUserTestData}}"
+    				},
+    				"url": {
+    					"raw": "http://{{baseUrl}}/users/{{userId}}",
+    					"protocol": "http",
+    					"host": [
+    						"{{baseUrl}}"
+    					],
+    					"path": [
+    						"users",
+    						"{{userId}}"
+    					],
+    					"query": [
+    						{
+    							"key": "",
+    							"value": null,
+    							"disabled": true
+    						}
+    					]
+    				}
+    			},
+    			"response": []
+    		},
+    		{
+    			"name": "Update User",
+    			"event": [
+    				{
+    					"listen": "prerequest",
+    					"script": {
+    						"id": "c945bcbb-d473-4268-b2c9-9e8f6316ab0e",
+    						"exec": [
+    							"var updateUserTestData =  {",
+    							"  \t    firstName:pm.variables.replaceIn(\"{{$randomFirstName}}\"),",
+    							"\t    lastName:pm.variables.replaceIn(\"{{$randomLastName}}\"),",
+    							"\t    email:pm.variables.replaceIn(\"{{$randomEmail}}\"),",
+    							"\t    phone:pm.variables.replaceIn(\"{{$randomPhoneNumber}}\")",
+    							"};",
+    							"  ",
+    							"pm.collectionVariables.set('updateUserTestData', JSON.stringify(updateUserTestData));",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				},
+    				{
+    					"listen": "test",
+    					"script": {
+    						"id": "63f17adf-ee75-4361-a4a2-29668e4e2dc8",
+    						"exec": [
+    							"pm.test('Update user test: Expect 204 status.', function () {\r",
+    							"    pm.response.to.have.status(204);\r",
+    							"});\r",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				}
+    			],
+    			"request": {
+    				"method": "PUT",
+    				"header": [
+    					{
+    						"key": "Content-Type",
+    						"value": "application/json",
+    						"type": "text"
+    					},
+    					{
+    						"key": "If-Match",
+    						"value": "{{currentUserVersion}}",
+    						"type": "text"
+    					},
+    					{
+    						"key": "Host",
+    						"value": "{{host}}",
+    						"type": "text"
+    					}
+    				],
+    				"body": {
+    					"mode": "raw",
+    					"raw": "{{updateUserTestData}}"
+    				},
+    				"url": {
+    					"raw": "http://{{baseUrl}}/users/{{userId}}",
+    					"protocol": "http",
+    					"host": [
+    						"{{baseUrl}}"
+    					],
+    					"path": [
+    						"users",
+    						"{{userId}}"
+    					],
+    					"query": [
+    						{
+    							"key": "Host",
+    							"value": null,
+    							"disabled": true
+    						}
+    					]
+    				}
+    			},
+    			"response": []
+    		},
+    		{
+    			"name": "Get Updated User",
+    			"event": [
+    				{
+    					"listen": "test",
+    					"script": {
+    						"id": "0fa6b2ce-518d-434d-9bfb-cad65fc2bf90",
+    						"exec": [
+    							"var jsonData = JSON.parse(responseBody);\r",
+    							"var updateUserTestData = JSON.parse(pm.collectionVariables.get('updateUserTestData'));\r",
+    							"var createUserTestData = JSON.parse(pm.collectionVariables.get('createUserTestData'));\r",
+    							"\r",
+    							"pm.test('Get updated user test: Expect 200 status.', function () {\r",
+    							"    pm.response.to.have.status(200);\r",
+    							"});\r",
+    							"\r",
+    							"pm.test('Get updated user test: Check Response Data. ', function () {\r",
+    							"    pm.expect(jsonData.id).to.equal(Number(pm.collectionVariables.get('userId')));\r",
+    							"    pm.expect(jsonData.username).to.equal(createUserTestData.username);\r",
+    							"    pm.expect(jsonData.firstName).to.equal(updateUserTestData.firstName);\r",
+    							"    pm.expect(jsonData.lastName).to.equal(updateUserTestData.lastName);\r",
+    							"    pm.expect(jsonData.email).to.equal(updateUserTestData.email);\r",
+    							"    pm.expect(jsonData.phone).to.equal(updateUserTestData.phone);\r",
+    							"    \r",
+    							"});\r",
+    							""
+    						],
+    						"type": "text/javascript"
+    					}
+    				}
+    			],
+    			"request": {
+    				"method": "GET",
+    				"header": [
+    					{
+    						"key": "Host",
+    						"value": "{{host}}",
+    						"type": "text"
+    					}
+    				],
+    				"url": {
+    					"raw": "http://{{baseUrl}}/users/{{userId}}",
+    					"protocol": "http",
+    					"host": [
+    						"{{baseUrl}}"
+    					],
+    					"path": [
+    						"users",
+    						"{{userId}}"
+    					]
+    				}
+    			},
+    			"response": []
+    		},
+    		{
+    			"name": "Delete User",
+    			"event": [
+    				{
+    					"listen": "test",
+    					"script": {
+    						"id": "74653178-3e8d-4671-b6cf-d1b3dba15a0a",
+    						"exec": [
+    							"pm.test('Get user test: Expect 204 status.', function () {\r",
+    							"    pm.response.to.have.status(204);\r",
+    							"});"
+    						],
+    						"type": "text/javascript"
+    					}
+    				}
+    			],
+    			"request": {
+    				"method": "DELETE",
+    				"header": [
+    					{
+    						"key": "Host",
+    						"value": "{{host}}",
+    						"type": "text"
+    					}
+    				],
+    				"url": {
+    					"raw": "http://{{baseUrl}}/users/{{userId}}",
+    					"protocol": "http",
+    					"host": [
+    						"{{baseUrl}}"
+    					],
+    					"path": [
+    						"users",
+    						"{{userId}}"
+    					]
+    				}
+    			},
+    			"response": []
+    		},
+    		{
+    			"name": "Get Deleted User",
+    			"event": [
+    				{
+    					"listen": "test",
+    					"script": {
+    						"id": "21fc445c-b821-4edf-85ab-10502c80ae07",
+    						"exec": [
+    							"pm.test('Get deleted user test: Expect 404 status.', function () {\r",
+    							"    pm.response.to.have.status(404);\r",
+    							"});"
+    						],
+    						"type": "text/javascript"
+    					}
+    				}
+    			],
+    			"request": {
+    				"method": "GET",
+    				"header": [
+    					{
+    						"key": "Host",
+    						"value": "{{host}}",
+    						"type": "text"
+    					}
+    				],
+    				"url": {
+    					"raw": "http://{{baseUrl}}/users/{{userId}}",
+    					"protocol": "http",
+    					"host": [
+    						"{{baseUrl}}"
+    					],
+    					"path": [
+    						"users",
+    						"{{userId}}"
+    					]
+    				}
+    			},
+    			"response": []
+    		}
+    	],
+    	"event": [
+    		{
+    			"listen": "prerequest",
+    			"script": {
+    				"id": "3efbe272-6317-48ba-a9bb-af40583ec48f",
+    				"type": "text/javascript",
+    				"exec": [
+    					""
+    				]
+    			}
+    		},
+    		{
+    			"listen": "test",
+    			"script": {
+    				"id": "738f4b6c-8165-4246-8616-ff9a629694f6",
+    				"type": "text/javascript",
+    				"exec": [
+    					""
+    				]
+    			}
+    		}
+    	],
+    	"variable": [
+    		{
+    			"id": "c4b3f0a0-adc2-4241-a0a9-8a777a099bcd",
+    			"key": "baseUrl",
+    			"value": "{{host}}/otusapp",
+    			"type": "string"
+    		},
+    		{
+    			"id": "76038936-28ed-4ad9-b71b-b1f7e19b68fd",
+    			"key": "userId",
+    			"value": "",
+    			"type": "string"
+    		},
+    		{
+    			"id": "b5c840a9-b30b-42d0-9478-a17ebcc065a1",
+    			"key": "createUserTestData",
+    			"value": "",
+    			"type": "string"
+    		},
+    		{
+    			"id": "6dbe8de6-e215-4292-9596-b868a771080e",
+    			"key": "updateUserTestData",
+    			"value": "",
+    			"type": "string"
+    		},
+    		{
+    			"id": "181edf83-cd2c-4a22-9040-44076b3d6b6a",
+    			"key": "currentUserVersion",
+    			"value": "",
+    			"type": "string"
+    		},
+    		{
+    			"id": "9326781b-398e-49fd-a33e-84001ed56280",
+    			"key": "createDublicateUserTestData",
+    			"value": "",
+    			"type": "string"
+    		},
+    		{
+    			"id": "f91fae5c-134b-4bcb-a427-55a307209d77",
+    			"key": "counter",
+    			"value": "0",
+    			"type": "string"
+    		},
+    		{
+    			"id": "8b7288b6-28e5-41fc-857d-0276eab3bcb3",
+    			"key": "host",
+    			"value": "arch.homework",
+    			"type": "string"
+    		}
+    	],
+    	"protocolProfileBehavior": {}
+    }

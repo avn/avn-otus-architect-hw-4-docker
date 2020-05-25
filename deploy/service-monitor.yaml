@@ -1,16 +1,13 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: avn-otus-hw1-architect-service-monitor
+  name: avn-app-service-monitor
   labels:
-    release: avn-prometheus
+    release: prometheus
 spec:
-  namespaceSelector:
-    matchNames:
-      - monitoring
   selector:
     matchLabels:
-      app.kubernetes.io/name: avn-otus-hw1-architect-service
+      app.kubernetes.io/name: avn-app
   endpoints:
     - port: avn-app-port
       path: /actuator/prometheus

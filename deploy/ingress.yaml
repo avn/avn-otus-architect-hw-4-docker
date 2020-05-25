@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1beta1 # for versions before 1.14 use extensions/v1beta1
 kind: Ingress
 metadata:
-  name: avn-otus-hw1-architect
+  name: avn-app
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
@@ -11,5 +11,5 @@ spec:
         paths:
           - path: /otusapp($|/)(.*)
             backend:
-              serviceName: avn-otus-hw1-architect-service
+              serviceName: avn-app
               servicePort: 8000

@@ -1,12 +1,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: avn-otus-hw1-architect-db-migration-job
+  name: avn-app-db-migration
 spec:
   template:
     spec:
       containers:
-        - name: avn-otus-hw1-architect-db-migration-job
+        - name: avn-app-db-migration
           image: avnikulin/otus-hw1-architect:1.1.0
           command: ["liquibase"]
           args: ["--changeLogFile", "changelog.xml",
@@ -21,22 +21,22 @@ spec:
             - name: DB_USERNAME
               valueFrom:
                 configMapKeyRef:
-                  name: avn-otus-hw1-architect-config-map
+                  name: avn-app-config
                   key: db.username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: avn-otus-hw1-architect-secret
+                  name: avn-app-secret
                   key: db.password
             - name: DB_DRIVER
               valueFrom:
                 configMapKeyRef:
-                  name: avn-otus-hw1-architect-config-map
+                  name: avn-app-config
                   key: db.driver
             - name: DB_URL
               valueFrom:
                 configMapKeyRef:
-                  name: avn-otus-hw1-architect-config-map
+                  name: avn-app-config
                   key: db.url
       restartPolicy: Never
 
