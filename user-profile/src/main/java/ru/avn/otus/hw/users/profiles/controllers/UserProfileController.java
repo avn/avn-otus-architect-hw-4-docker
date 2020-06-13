@@ -7,13 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.avn.otus.hw.commons.web.utils.ETagUtils;
+import ru.avn.otus.hw.common.validators.annotations.ValidIfMatchUserVersion;
+import ru.avn.otus.hw.common.web.utils.ETagUtils;
 import ru.avn.otus.hw.users.profiles.dto.*;
 import ru.avn.otus.hw.users.profiles.exceptions.UserProfileAlreadyExistsException;
 import ru.avn.otus.hw.users.profiles.exceptions.UserProfileIncorrectVersionException;
 import ru.avn.otus.hw.users.profiles.exceptions.UserProfileNotFoundException;
 import ru.avn.otus.hw.users.profiles.services.UserProfileService;
-import ru.avn.otus.hw.users.profiles.validators.annotations.ValidIfMatchUserVersion;
 
 @Slf4j
 @Validated

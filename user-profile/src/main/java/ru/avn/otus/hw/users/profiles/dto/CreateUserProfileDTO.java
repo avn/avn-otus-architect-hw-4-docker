@@ -1,7 +1,7 @@
 package ru.avn.otus.hw.users.profiles.dto;
 
 import lombok.Data;
-import ru.avn.otus.hw.users.profiles.validators.annotations.*;
+import ru.avn.otus.hw.common.validators.annotations.*;
 
 @Data
 public class CreateUserProfileDTO {

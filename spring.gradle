@@ -1,0 +1,17 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeClasspath 'org.springframework.boot:spring-boot-devtools'
+
+    compileOnly 'com.h2database:h2'
+    compileOnly 'org.liquibase:liquibase-core'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    testImplementation 'com.h2database:h2'
+    testImplementation 'org.liquibase:liquibase-core'
+}

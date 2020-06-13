@@ -1,4 +1,4 @@
-package ru.avn.otus.hw.users.profiles.validators.annotations;
+package ru.avn.otus.hw.common.validators.annotations;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,12 +9,12 @@ import java.lang.annotation.*;
 
 @NotNull
 @NotBlank
-@Size(max = 256)
+@Size(max = 12)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Constraint(validatedBy = {})
-public @interface ValidUsername {
+public @interface ValidPassword {
 
     String message() default "{javax.validation.constraints.Size.message}";
 

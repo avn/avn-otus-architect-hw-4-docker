@@ -69,14 +69,14 @@ spec:
           livenessProbe:
             httpGet:
               port: {{ toString .Values.port }}
-              path: /health
+              path: /actuator/health
             initialDelaySeconds: 30
             periodSeconds: 5
             timeoutSeconds: 2
           readinessProbe:
             httpGet:
               port: {{ toString .Values.port }}
-              path: /health
+              path: /actuator/health
             initialDelaySeconds: 15
             periodSeconds: 5
             timeoutSeconds: 2

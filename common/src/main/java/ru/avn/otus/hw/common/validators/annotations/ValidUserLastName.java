@@ -1,4 +1,4 @@
-package ru.avn.otus.hw.users.profiles.validators.annotations;
+package ru.avn.otus.hw.common.validators.annotations;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

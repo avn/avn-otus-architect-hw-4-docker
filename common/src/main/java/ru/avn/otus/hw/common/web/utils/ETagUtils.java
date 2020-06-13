@@ -1,4 +1,4 @@
-package ru.avn.otus.hw.commons.web.utils;
+package ru.avn.otus.hw.common.web.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
