@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-db-migration" .Values.applicationName }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: {{ printf "%s-db-migration" .Values.applicationName }}
+          image: {{ .Values.image }}
+          command: ["liquibase"]
+          args: ["--changeLogFile", "changelog.xml",
+                 "--username", "$(DB_USERNAME)",
+                 "--password", "$(DB_PASSWORD)",
+                 "--url", "$(DB_URL)",
+                 "--driver", "$(DB_DRIVER)",
+                 "--classpath", "/usr/share/java/postgresql-jdbc.jar",
+                 "update"
+          ]
+          env:
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ printf "%s-config" .Values.applicationName }}
+                  key: db.username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name:  {{ printf "%s-secret" .Values.applicationName }}
+                  key: db.password
+            - name: DB_DRIVER
+              valueFrom:
+                configMapKeyRef:
+                  name:  {{ printf "%s-config" .Values.applicationName }}
+                  key: db.driver
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name:  {{ printf "%s-config" .Values.applicationName }}
+                  key: db.url
+      restartPolicy: Never
+

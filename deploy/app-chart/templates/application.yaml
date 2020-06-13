@@ -1,0 +1,82 @@
+---
+apiVersion: networking.k8s.io/v1beta1 # for versions before 1.14 use extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Values.applicationName }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - host: {{ .Values.host }}
+      http:
+        paths:
+          - path: /otusapp($|/)(.*)
+            backend:
+              serviceName: {{ .Values.applicationName }}
+              servicePort: {{ toString .Values.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.applicationName }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.applicationName }}
+spec:
+  selector:
+    app: {{ .Values.applicationName }}
+  ports:
+    - name: {{ printf "%s-port" .Values.applicationName }}
+      protocol: TCP
+      port: {{ toString .Values.port }}
+      targetPort: {{ toString .Values.port }}
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.applicationName }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.applicationName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.applicationName }}
+    spec:
+      containers:
+        - name: {{ .Values.applicationName }}
+          image: {{ .Values.image }}
+          ports:
+            - containerPort: {{ toString .Values.port }}
+          env:
+            - name: spring_datasource_url
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ printf "%s-config" .Values.applicationName }}
+                  key: db.url
+            - name: spring_datasource_username
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ printf "%s-config" .Values.applicationName }}
+                  key: db.username
+            - name: spring_datasource_password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-secret" .Values.applicationName }}
+                  key: db.password
+          livenessProbe:
+            httpGet:
+              port: {{ toString .Values.port }}
+              path: /health
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 2
+          readinessProbe:
+            httpGet:
+              port: {{ toString .Values.port }}
+              path: /health
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 2
