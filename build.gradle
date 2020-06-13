@@ -1,48 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '2.2.6.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-    id 'java'
+    id 'org.springframework.boot' version '2.2.6.RELEASE' apply false
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE' apply false
 }
 
 group = 'ru.avn.otus.hw'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
-
-configurations {
-    developmentOnly
-    runtimeClasspath {
-        extendsFrom developmentOnly
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'io.micrometer:micrometer-registry-prometheus'
-
-    implementation 'org.postgresql:postgresql'
-
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-    compileOnly 'com.h2database:h2'
-    compileOnly 'org.liquibase:liquibase-core'
-
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
-
-    testImplementation 'com.h2database:h2'
-    testImplementation 'org.liquibase:liquibase-core'
-}
-
-test {
-    useJUnitPlatform()
-}

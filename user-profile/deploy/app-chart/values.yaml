@@ -1,0 +1,14 @@
+applicationName: avn-architect-app
+
+image: avnikulin/otus-hw1-architect:1.1.0
+
+host: arch.homework
+port: 8000
+replicas: 2
+
+db:
+  name: otushw1
+  username: otushw1
+  driver: org.postgresql.Driver
+  password: c2VjcmV0X3Bhc3N3b3Jk
+  port: 5432

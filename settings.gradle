@@ -1,1 +1,3 @@
-rootProject.name = 'hw1-architect-docker'
+include 'user-profile'
+include 'auth'
+
